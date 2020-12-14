@@ -1,0 +1,186 @@
+ See document DESC-610:10 00014 Intec PLC 2kW Tester
+
+ ===================================================
+
+ In order for Python/Robot to run user must export a path.
+
+ export PYTHONPATH='./220_04_062'
+
+ ===================================================
+
+ How to run at top level:
+ 	> python3 top.py
+
+	User then have to enter a string or use a scanner to continue.
+	A log file with date is created under /Logs.
+
+	At startup the user can exclude or include tests.
+	To find the tags look into intec_tests.robot. Look for "[Tags]".
+	The tags are also shown in the created log file, "Statistics by Tag".
+
+		> python3 top.py -e <tag_name>
+		> python3 top.py -i <tag_name>
+
+
+ How to run standalone:
+ 	Run all robot tests. A log file is created locally (log.html).
+
+		> python3 -m robot.run intec_plc_tests.robot
+
+
+How to run with tags:
+	All tests have tags attached to it. There can be more than one tag
+	to a test. It's possible to add several tags.
+	User can either exclude or include a test.
+
+	To exclude a test:
+		> python3 -m robot.run -e <tag_name> intec_plc_tests.robot
+
+	Ex:
+		> python3 -m robot.run -e pwr_test intec_plc_tests.robot
+		> python3 -m robot.run -e pwr_test flash_sw intec_plc_tests.robot
+
+	To include a test:
+		> python3 -m robot.run -i <tag_name> intec_plc_tests.robot
+
+	Ex:
+		> python3 -m robot.run -i pwr_5V intec_plc_tests.robot
+		> python3 -m robot.run -i pwr_5V -i pwr_12V intec_plc_tests.robot
+
+
+Change log level
+	> python3 -m robot.run -L info intec_plc_tests.robot
+
+
+Do a dry run.
+	> python3 -m robot.run --dryrun intec_plc_tests.robot
+
+===========================================================================
+
+Used tags -
+	pwr_test: run all tests related to power external/internanl power supply
+
+	pwr_supply: run all tests related to external power supply
+
+	pwr_5V, pwr_12V, pwr_24V: run individual external power supply tests
+
+	int_pwr: run all tests related to internal power supply
+
+	pwr_3v3a, pwr_3v3d, pwr_6vd, pwr_pp6v, pwr_aux, pwr_usb_vbus,
+	pwr_5v_iso, pwr_5v_neg, pwr_or, pwr_com_p5vd, pwr_hf_p8vd,
+	pwr_hl_9v: run individual internal power supply tests
+
+	iso_test: run all isolation tests
+	iso_test1: run isolation test 1
+	iso_test2: run isolation test 2
+
+	flash_plc: flash bootloader and test application
+
+	hf_test: hiperface test
+
+	led_test1: run LED test 1
+	led_test2: run LED test 2
+	led_test3: run LED test 3
+
+	plc_test: run all PLC tests
+	plc_in_test: run PLC in test
+	plc_out_test: run PLC out test
+
+===========================================================================
+
+I2C related issues.
+
+N.B! +5V and +24V need to be ON.
+
+To detect the I2C components:
+	i2cdetect is a userspace program to scan an I2C bus for devices.
+		> i2cdetect -y 1
+
+The result should look like:
+	     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+	00:          -- -- -- -- -- -- -- -- -- -- -- -- -- 
+	10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+	20: 20 21 -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+	30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+	40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+	50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+	60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+
+
+To control the I2C component:
+
+	i2cset -y 1 <addr> <reg> <data>
+	i2cset -y 1 0x20 0x00 0xc0
+
+	i2cget -y 1 0x20 0x00
+
+===========================================================================
+
+Installed SW:
+
+pip3 install canopen==1.1.0
+
+===========================================================================
+
+The /bin directory contains binaries to flash.
+
+	Bootloader:
+	  HCF-220_02_137_PA4.elf*
+	
+	Application:
+	  HCF-220_02_132.ub/home/heinz.samuelsson/raspi_loc/heinzl
+
+===========================================================================
+
+SW structure
+
+top.py  -  starts application
+main.py -  starts Robot Framework
+
+firmware_flash_plc.py  -  Handling of bootloader/application flash
+
+intec_tests.robot  -  Contains main tests
+intec_internal_supply_test.robot  -  sub module to intec_tests.robot
+intec_power_supply_test.robot  -  sub module to intec_tests.robot
+config_intec.robot  -- Contains configuration related to Intec
+
+servo.ods - CAN objects auto generated file
+
+/bin directory  -  Contains binary files to be flashed on target
+
+/220_04_062  -  Unicorn Robot Framework and Python drivers
+
+id_file  -  Identification file. Locatated on the SD-card on the adapter
+	    board.
+
+===========================================================================
+
+xml_parser.py
+
+To check the I/O port configurations from all i2c and spi components
+(MCP23017, MCP23S17) you can run:
+
+python3 xml_parser.py
+
+===========================================================================
+
+Test run during development:
+
+Run all tests:
+python3 -m robot.run -i pwr_test -i flash_plc -i led_test -i ana_test -i plc_test intec_plc_tests.robot
+
+Power up PLC only:
+python3 -m robot.run -i plc_up intec_plc_tests.robot
+
+Run Analog In test:
+python3 -m robot.run -i flash_plc -i ana_test intec_plc_tests.robot
+
+Run CAN test:
+python3 -m robot.run -i flash_plc -i can_test intec_plc_tests.robot
+
+Run external power test:
+python3 -m robot.run -i pwr_supply intec_plc_tests.robot
+
+Run internal power test:
+python3 -m robot.run -i int_pwr intec_plc_tests.robot
+
