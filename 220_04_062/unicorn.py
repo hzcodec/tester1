@@ -1,13 +1,11 @@
 # pylint: disable=pointless-statement
 # pylint: disable=protected-access
 
-#import logging
 import time
 
 from robot.api import logger
 
 import ad4112
-#import CANopen
 import dac61408
 import mcp23017
 import mcp23s17
@@ -48,10 +46,6 @@ class unicorn:
 		self.io_expander_1_i2c = mcp23017.mcp23017(MCP23017_ADDR_0)
 		self.io_expander_2_i2c = mcp23017.mcp23017(MCP23017_ADDR_1)
 		self.adc1 = ad4112.ad4112()
-
-		#self.CANopen = CANopen.CANopen()
-		# [FIXME]: This is'nt created for some reason. Done in init_dac() instead.
-		#self.dac = dac61408.dac61408()
 
 		self.config_locked_by_system = False
 
