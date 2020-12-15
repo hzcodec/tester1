@@ -2,7 +2,6 @@
 # pylint: disable= unused-variable
 # pylint: disable= wrong-import-order
 from common_files.common import *
-from common_files.common_mcp23s17 import *
 from robot.api import logger
 import logging
 import os

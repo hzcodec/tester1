@@ -5,7 +5,6 @@
 import logging
 from robot.api import logger
 from common_files.common import *
-from common_files.common_dac61408 import *
 import spidev
 import time
 import os

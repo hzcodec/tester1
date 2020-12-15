@@ -1,5 +1,4 @@
 from common_files.common import *
-from common_files.common_mcp23017 import *
 from robot.api import logger
 import logging
 import smbus

@@ -4,7 +4,6 @@ import time
 import sys
 from robot.api import logger
 from common_files.common import *
-from common_files.common_ad4112 import *
 import spidev
 
 logging.basicConfig(level=logging.DEBUG)

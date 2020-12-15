@@ -7,7 +7,7 @@ import time
 from robot.api import logger
 
 import ad4112
-import CANopen
+#import CANopen
 import dac61408
 import mcp23017
 import mcp23s17
@@ -15,10 +15,6 @@ import os
 import unicorn_test_cases as utc
 
 from common_files.common import *
-from common_files.common_mcp23017 import *
-from common_files.common_mcp23s17 import *
-from common_files.common_ad4112 import *
-from common_files.common_dac61408 import *
 
 # library used during development
 from config import MCP1, MCP2, AD1
@@ -53,7 +49,7 @@ class unicorn:
 		self.io_expander_2_i2c = mcp23017.mcp23017(MCP23017_ADDR_1)
 		self.adc1 = ad4112.ad4112()
 
-		self.CANopen = CANopen.CANopen()
+		#self.CANopen = CANopen.CANopen()
 		# [FIXME]: This is'nt created for some reason. Done in init_dac() instead.
 		#self.dac = dac61408.dac61408()
 
